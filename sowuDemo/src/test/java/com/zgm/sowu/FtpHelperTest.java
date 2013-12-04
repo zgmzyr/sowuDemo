@@ -26,7 +26,7 @@ public class FtpHelperTest {
 	
 	@Test
 	public void connect() throws IOException {
-		boolean success = ftpHelper.connect("ftp.noao.edu", 21, "anonymous", "");
+		boolean success = isConnect();
 		if (success) {
 			System.out.println("连接成功");
 		} else {
@@ -36,9 +36,8 @@ public class FtpHelperTest {
 
 	@Test
 	public void download() throws IOException {
-		boolean success = ftpHelper.connect("ftp.noao.edu", 21, "anonymous", "");
+		boolean success = isConnect();
 		if (success) {
-//			DownloadStatus status = ftpHelper.download("ftp://ftp.noao.edu/README", "e:/zgm/ftp/readme.txt");
 			DownloadStatus status = ftpHelper.download("/README", "e:/zgm/ftp/readme.txt");
 			if (status == DownloadStatus.Download_New_Success) {
 				return;
@@ -50,7 +49,7 @@ public class FtpHelperTest {
 
 	@Test
 	public void upload() throws IOException {
-		boolean success = ftpHelper.connect("ftp.noao.edu", 21, "anonymous", "");
+		boolean success = isConnect();
 		if (success) {
 			UploadStatus status = ftpHelper.upload("e:/zgm/ftp/readme.txt", "/readme.txt");
 			if (status == UploadStatus.Upload_New_File_Success) {
@@ -83,14 +82,22 @@ public class FtpHelperTest {
 
 	@Test
 	public void getDirAndFilesInfo() throws IOException {
-		if (ftpHelper.connect("ftp.noao.edu", 21, "anonymous", "")) {
+		
+//		if (ftpHelper.connect("ftp.noao.edu", 21, "anonymous", "")) {
+		if (ftpHelper.connect("demo.sowu.com", 21, "zgmzyr", "654321")) {
 			System.out.println("连接成功");
 			
 			String[] fileArray = ftpHelper.getFileNames(null);
 			for (String fileName : fileArray) {
-				System.out.println("" + fileName);
+				System.out.println(fileName);
 			}
+		} else {
+			fail("失败");
 		}
+		
 	}
 
+	private boolean isConnect() throws IOException {
+		return ftpHelper.connect("ftp.noao.edu", 21, "anonymous", "");
+	}
 }

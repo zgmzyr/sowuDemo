@@ -42,7 +42,7 @@ public class FtpHelper {
 	 */
 	public boolean connect(String hostname, int port, String username, String password) throws IOException {
 		ftpClient.connect(hostname, port);
-		ftpClient.setControlEncoding("GBK");
+		ftpClient.setControlEncoding("UTF-8");
 		if (FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
 			if (ftpClient.login(username, password)) {
 				return true;
@@ -70,7 +70,7 @@ public class FtpHelper {
 		DownloadStatus result;
 
 		// 检查远程文件是否存在
-		FTPFile[] files = ftpClient.listFiles(new String(remotePath.getBytes("GBK"), "iso-8859-1"));
+		FTPFile[] files = ftpClient.listFiles(new String(remotePath.getBytes("UTF-8"), "iso-8859-1"));
 		if (files.length != 1) {
 			System.out.println("远程文件不存在");
 			return DownloadStatus.Remote_File_Noexist;
@@ -90,7 +90,7 @@ public class FtpHelper {
 			// 进行断点续传，并记录状态
 			FileOutputStream out = new FileOutputStream(f, true);
 			ftpClient.setRestartOffset(localSize);
-			InputStream in = ftpClient.retrieveFileStream(new String(remotePath.getBytes("GBK"), "iso-8859-1"));
+			InputStream in = ftpClient.retrieveFileStream(new String(remotePath.getBytes("UTF-8"), "iso-8859-1"));
 			byte[] bytes = new byte[1024];
 			long step = lRemoteSize / 100;
 			long process = localSize / step;
@@ -116,7 +116,7 @@ public class FtpHelper {
 			}
 		} else {
 			OutputStream out = new FileOutputStream(f);
-			InputStream in = ftpClient.retrieveFileStream(new String(remotePath.getBytes("GBK"), "iso-8859-1"));
+			InputStream in = ftpClient.retrieveFileStream(new String(remotePath.getBytes("UTF-8"), "iso-8859-1"));
 			byte[] bytes = new byte[1024];
 			long step = lRemoteSize / 100;
 			long process = 0;
@@ -160,7 +160,7 @@ public class FtpHelper {
 		ftpClient.enterLocalPassiveMode();
 		// 设置以二进制流的方式传输
 		ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-		ftpClient.setControlEncoding("GBK");
+		ftpClient.setControlEncoding("UTF-8");
 		UploadStatus result;
 		// 对远程目录的处理
 		String remoteFileName = remotePath;
@@ -179,7 +179,7 @@ public class FtpHelper {
 		// System.out.println(ftpClient.getReplyString());
 
 		// 检查远程是否存在文件
-		FTPFile[] files = ftpClient.listFiles(new String(remoteFileName.getBytes("GBK"), "iso-8859-1"));
+		FTPFile[] files = ftpClient.listFiles(new String(remoteFileName.getBytes("UTF-8"), "iso-8859-1"));
 		if (files.length == 1) {
 			long remoteSize = files[0].getSize();
 			File f = new File(localPath);
@@ -231,7 +231,7 @@ public class FtpHelper {
 		UploadStatus status = UploadStatus.Create_Directory_Success;
 		String directory = remote.substring(0, remote.lastIndexOf("/") + 1);
 		if (!directory.equalsIgnoreCase("/")
-				&& !ftpClient.changeWorkingDirectory(new String(directory.getBytes("GBK"), "iso-8859-1"))) {
+				&& !ftpClient.changeWorkingDirectory(new String(directory.getBytes("UTF-8"), "iso-8859-1"))) {
 			// 如果远程目录不存在，则递归创建远程服务器目录
 			int start = 0;
 			int end = 0;
@@ -242,7 +242,7 @@ public class FtpHelper {
 			}
 			end = directory.indexOf("/", start);
 			while (true) {
-				String subDirectory = new String(remote.substring(start, end).getBytes("GBK"), "iso-8859-1");
+				String subDirectory = new String(remote.substring(start, end).getBytes("UTF-8"), "iso-8859-1");
 				if (!ftpClient.changeWorkingDirectory(subDirectory)) {
 					if (ftpClient.makeDirectory(subDirectory)) {
 						ftpClient.changeWorkingDirectory(subDirectory);
@@ -286,7 +286,7 @@ public class FtpHelper {
 		long process = 0;
 		long localreadbytes = 0L;
 		RandomAccessFile raf = new RandomAccessFile(localFile, "r");
-		String remote = new String(remoteFile.getBytes("GBK"), "iso-8859-1");
+		String remote = new String(remoteFile.getBytes("UTF-8"), "iso-8859-1");
 		OutputStream out = ftpClient.appendFileStream(remote);
 		if (out == null) {
 			String message = ftpClient.getReplyString();
